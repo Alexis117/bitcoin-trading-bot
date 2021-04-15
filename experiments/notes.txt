@@ -1,0 +1,4 @@
+Notes
+-> Stop lost with this hourly strategy does not work properly
+-> We havent prove with exponential moving average
+-> We plan implement a regression algorithm to forecast tendency and improve our strategy

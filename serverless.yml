@@ -1,0 +1,25 @@
+
+service: tradingbot
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: python3.6
+  lambdaHashingVersion: 20201221
+  region: us-east-2
+
+functions:
+  lambda_handler:
+    handler: lambda_function.lambda_handler
+    events:
+      - schedule: cron(1 * * * ? *)
+    environment:
+      SMS_API_KEY=${SMS_API_KEY}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
