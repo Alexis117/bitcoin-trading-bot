@@ -1,3 +1,4 @@
+import json
 import os
 
 import requests
@@ -32,7 +33,8 @@ def get_db_data(db_table):
                 'last_buying_amount': 100,
                 'current_amount': 100,
                 'current_currency': 'USD',
-                'cumulative_earnings': 0
+                'cumulative_earnings': 0,
+                'last_moving_average':json.dumps({'long':None, 'short':None})
             })
         response = db_table.get_item(Key={
                 'key': 1
@@ -44,5 +46,6 @@ def get_db_data(db_table):
         'last_buying_amount': float(data['last_buying_amount']),
         'current_amount': float(data['current_amount']),
         'current_currency': data['current_currency'],
-        'cumulative_earnings': float(data['cumulative_earnings'])
+        'cumulative_earnings': float(data['cumulative_earnings']),
+        'last_moving_average': json.loads(data['last_moving_average'])
     }

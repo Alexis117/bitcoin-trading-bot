@@ -27,7 +27,8 @@ functions:
       SMS_API_KEY: ${env:SMS_API_KEY}
       CRYPTO_API_KEY: ${env:CRYPTO_API_KEY}
       PHONE_NUMBER: ${env:PHONE_NUMBER}
-
+      BITSO_API_SECRET: ${env:BITSO_API_SECRET}
+      BITSO_API_KEY: ${env:BITSO_API_KEY}
 plugins:
   - serverless-python-requirements
 
