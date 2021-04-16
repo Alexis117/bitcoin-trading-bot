@@ -8,6 +8,15 @@ provider:
   runtime: python3.6
   lambdaHashingVersion: 20201221
   region: us-east-2
+  environment:
+    DYNAMO_DB_TABLE: ${env:DYNAMO_DB_TABLE}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_DB_TABLE}"
 
 functions:
   lambda_handler:
@@ -15,11 +24,35 @@ functions:
     events:
       - schedule: cron(1 * * * ? *)
     environment:
-      SMS_API_KEY=${SMS_API_KEY}
+      SMS_API_KEY: ${env:SMS_API_KEY}
+      CRYPTO_API_KEY: ${env:CRYPTO_API_KEY}
+      PHONE_NUMBER: ${env:PHONE_NUMBER}
 
 plugins:
   - serverless-python-requirements
 
+useDotenv: true
+
 custom:
   pythonRequirements:
     dockerizePip: non-linux
+
+package:
+  patterns:
+    - '!experiments/**'
+
+resources:
+  Resources:
+    NicknamesTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: key
+            AttributeType: N
+        KeySchema:
+          - AttributeName: key
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMO_DB_TABLE}
