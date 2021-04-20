@@ -1,3 +1,4 @@
+from decimal import Decimal
 import json
 import os
 
@@ -55,7 +56,6 @@ def get_db_data(db_table):
 
 def update_db_data(db_table, data):
     '''Updates data from table'''
-
     response = db_table.update_item(
         Key={
             'key': 1
@@ -63,10 +63,10 @@ def update_db_data(db_table, data):
         UpdateExpression='set last_buying_amount=:lba, current_amount=:ca, \
             current_currency=:cc, cumulative_earnings=:ce, last_moving_average=:lma',
         ExpressionAttributeValues={
-            ':lba': data['last_buying_amount'],
-            ':ca': data['current_amount'],
+            ':lba': Decimal(str(data['last_buying_amount'])),
+            ':ca': Decimal(str(data['current_amount'])),
             ':cc': data['current_currency'],
-            ':ce': data['cumulative_earnings'],
+            ':ce': Decimal(str(data['cumulative_earnings'])),
             ':lma': json.dumps(data['last_moving_average'])
         },
         ReturnValues='ALL_NEW'
