@@ -34,16 +34,17 @@ class TraderBot:
             
     def run(self):
         if not self.last_moving_average['long']: #Check if first call and initializing
-            self.last_moving_averages['long'] = self.calculate_moving_average(av_type='long')
-            self.last_moving_averages['short'] = self.calculate_moving_average(av_type='short')
+            self.last_moving_average['long'] = self.calculate_moving_average(av_type='long')
+            self.last_moving_average['short'] = self.calculate_moving_average(av_type='short')
         
-        moving_averages['long'] = self.calculate_moving_average(av_type='long', index=i)
-        moving_averages['short'] = self.calculate_moving_average(av_type='short', index=i)
+        moving_average = {}
+        moving_average['long'] = self.calculate_moving_average(av_type='long')
+        moving_average['short'] = self.calculate_moving_average(av_type='short')
 
-        action = self.decide_action(moving_averages = moving_averages)
+        action = self.decide_action(moving_average = moving_average)
 
-        self.last_moving_averages['long'] = moving_averages['long']
-        self.last_moving_averages['short'] = moving_averages['short']
+        self.last_moving_average['long'] = moving_average['long']
+        self.last_moving_average['short'] = moving_average['short']
 
         new_db_data = {
             'last_buying_amount': self.last_buying_amount,
@@ -56,7 +57,7 @@ class TraderBot:
         return {'action':action, 'new_db_data':new_db_data}
     
     def calculate_moving_average(self, av_type):
-        short_values = self.bitcoin_data[index-9:index]
+        short_values = self.bitcoin_data[len(self.bitcoin_data)-1-9:len(self.bitcoin_data)]
         long_values = self.bitcoin_data
         if av_type == 'short':
             moving_average = sum(short_values)/len(short_values)
@@ -64,7 +65,7 @@ class TraderBot:
             moving_average = sum(long_values)/len(long_values)
         return moving_average
     
-    def decide_action(self, price):
+    def decide_action(self, moving_average):
         btc_buy_price, btc_sell_price = self.get_current_bitso_prices()
 
         if self.current_currency == 'BTC':
@@ -79,8 +80,8 @@ class TraderBot:
                 return {'action':'SELL', 'message':'Earnings taken'}
 
         #Bull tendency case
-        if moving_averages['long'] > moving_averages['short']:
-            if self.last_moving_averages['long'] < self.last_moving_averages['short']:
+        if moving_average['long'] > moving_average['short']:
+            if self.last_moving_average['long'] < self.last_moving_average['short']:
                 if self.current_currency == 'USD':
                     self.current_amount = ( self.current_amount * 0.9935 ) / btc_sell_price
                     self.current_currency = 'BTC'
@@ -89,7 +90,7 @@ class TraderBot:
                 return {'action':'NONE', 'message':'Tendency is the same'}
         #Bear tendency case
         else:
-            if self.last_moving_averages['long'] > self.last_moving_averages['short']:
+            if self.last_moving_average['long'] > self.last_moving_average['short']:
                 if self.current_currency == 'BTC':
                     if self.current_amount * btc_buy_price * 0.9935 > self.initial_amount:
                         self.cumulative_earnings = self.cumulative_earnings + ( self.current_amount * btc_buy_price * 0.9935 ) - self.initial_amount
@@ -101,8 +102,8 @@ class TraderBot:
             else:
                 return {'action':'NONE', 'message':'Tendency is the same'}
 
-    def get_current_bitso_prices():
-        trades = api.trades('btc_mxn')
+    def get_current_bitso_prices(self):
+        trades = self.bitso_client.trades('btc_mxn')
         last_sell = None
         last_buy = None
         for trade in trades:

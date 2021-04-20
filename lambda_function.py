@@ -25,7 +25,7 @@ def lambda_handler(event, context):
 
     #Trader
     result = TraderBot(db_data=data, bitso_client=bitso_client).run()
-
+    
     if result['action']['action'] != 'NONE':
         update_data = result['data']
         data = update_db_data(db_table=table, data=update_data)
@@ -35,5 +35,5 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
-        'body': json.dumps({'data':data, 'action':action})
+        'body': json.dumps({'data':data, 'action':result['action']})
     }
