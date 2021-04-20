@@ -11,8 +11,8 @@ def send_sms(info):
 
     headers = {"apikey": sms_api_key}
 
-    message = f'BITCOIN TRADING BOT: Action:{info['action']['action']}, \
-        Mesage:{info['action']['message']} {info['new_db_data']['current_amount']}{info['new_db_data']['current_currency']}'
+    message = 'BITCOIN TRADING BOT: Action:{}, Mesage:{} {} {}'.format(info['action']['action'], info['action']['action'], info['new_db_data']['current_amount'], info['new_db_data']['current_currency'])
+
     data = {
         'message': message, 
         'numbers':[phone_number],
@@ -67,7 +67,7 @@ def update_db_data(db_table, data):
             ':cc': data['current_currency'],
             ':ce': data['cumulative_earnings'],
             ':lma': json.dumps(data['last_moving_average'])
-        }
+        },
         ReturnValues='ALL_NEW'
     )
     return response

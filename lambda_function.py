@@ -21,10 +21,10 @@ def lambda_handler(event, context):
     key = os.environ['BITSO_API_KEY']
     secret = os.environ['BITSO_API_SECRET']
 
-    bitso = bitso.Api(key, secret)
+    bitso_client = bitso.Api(key, secret)
 
     #Trader
-    result = TraderBot(db_data=data, bitso_client=bitso).run()
+    result = TraderBot(db_data=data, bitso_client=bitso_client).run()
 
     if result['action']['action'] != 'NONE':
         update_data = result['data']

@@ -1,5 +1,8 @@
-import requests
 import os
+
+import requests
+import numpy as np
+
 
 def get_bitcoin_data(days=21):
     crypto_api_key = os.environ['CRYPTO_API_KEY']
@@ -7,7 +10,7 @@ def get_bitcoin_data(days=21):
         'authorization': 'Apikey ' + crypto_api_key
     }
 
-    response = requests.get('https://min-api.cryptocompare.com/data/v2/histohour?fsym=BTC&tsym=USD&limit='+days)
+    response = requests.get('https://min-api.cryptocompare.com/data/v2/histohour?fsym=BTC&tsym=USD&limit='+str(days))
 
     if response.status_code == 200:
         data = response.json()['Data']['Data']
@@ -22,14 +25,14 @@ class TraderBot:
     def __init__(self, db_data, bitso_client):
         self.bitcoin_data = get_bitcoin_data()
         self.current_currency = db_data['current_currency']
-        self.last_moving_averages = db_data['last_moving_average']
+        self.last_moving_average = db_data['last_moving_average']
         self.initial_amount = db_data['initial_amount']
         self.current_amount = db_data['current_amount']
         self.last_buying_amount = db_data['last_buying_amount']
         self.cumulative_earnings = db_data['cumulative_earnings']
         self.bitso_client = bitso_client
             
-    def run():
+    def run(self):
         if not self.last_moving_average['long']: #Check if first call and initializing
             self.last_moving_averages['long'] = self.calculate_moving_average(av_type='long')
             self.last_moving_averages['short'] = self.calculate_moving_average(av_type='short')

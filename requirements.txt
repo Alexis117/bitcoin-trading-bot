@@ -1,2 +1,3 @@
 requests
 bitso-py
+numpy
