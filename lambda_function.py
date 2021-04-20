@@ -34,5 +34,5 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
-        'body': json.dumps({'data':new_data, 'action':result['action']})
+        'body': json.dumps({'data':update_data, 'action':result['action']})
     }
