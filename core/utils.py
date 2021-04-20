@@ -11,7 +11,8 @@ def send_sms(info):
 
     headers = {"apikey": sms_api_key}
 
-    message = 'BITCOIN TRADING BOT: Action:{}, Mesage:{} {} {}'.format(info['action']['action'], info['action']['action'], info['new_db_data']['current_amount'], info['new_db_data']['current_currency'])
+    #This line is not pep8 formatted due to syntax error issues on lambda
+    message = 'BITCOIN TRADING BOT - Action:{}, Mesage:{} Earnings:{} {} {} '.format(info['action']['action'], info['action']['message'], info['new_db_data']['cumulative_earnings'], info['new_db_data']['current_amount'], info['new_db_data']['current_currency'])
 
     data = {
         'message': message, 
