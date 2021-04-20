@@ -5,7 +5,7 @@ import bitso
 import boto3
 import requests
     
-from core.utils import send_sms, get_db_data
+from core.utils import send_sms, get_db_data, update_db_data
 from core.trading import TraderBot
 
 def lambda_handler(event, context):
@@ -26,14 +26,13 @@ def lambda_handler(event, context):
     #Trader
     result = TraderBot(db_data=data, bitso_client=bitso_client).run()
     
-    if result['action']['action'] != 'NONE':
-        update_data = result['data']
-        data = update_db_data(db_table=table, data=update_data)
+    update_data = result['new_db_data']
+    new_data = update_db_data(db_table=table, data=update_data)
 
     #Send sms monitoring message
     send_sms(info=result)
     
     return {
         'statusCode': 200,
-        'body': json.dumps({'data':data, 'action':result['action']})
+        'body': json.dumps({'data':new_data, 'action':result['action']})
     }
