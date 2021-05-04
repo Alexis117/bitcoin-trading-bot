@@ -103,16 +103,16 @@ class TraderBot:
                 return {'action':'NONE', 'message':'Tendency is the same'}
 
     def get_current_bitso_prices(self):
-        trades = self.bitso_client.trades('btc_mxn')
+        trades = self.bitso_client.trades('btc_usd')
         last_sell = None
         last_buy = None
         for trade in trades:
             if not last_sell:
                 if trade.maker_side == 'sell':
-                    last_sell = trade
+                    last_sell = float(trade.price)
             if not last_buy:
                 if trade.maker_side == 'buy':
-                    last_buy = trade
+                    last_buy = float(trade.price)
             if last_sell and last_buy:
                 break
         return last_buy, last_sell
